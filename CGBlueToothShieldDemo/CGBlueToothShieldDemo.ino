@@ -9,11 +9,9 @@ CGShield CS;
 
 #define BUTTONFRAME 0X43 
 
-#define LIGHTFRAME 0X44 
+#define SENSORFRAME 0X44 
 
-#define TEMPFRAME 0X45 
 
-#define TRIMFRAME 0X46 
 
 #define RFRAME 0X47 
 #define GFRAME 0X48 
@@ -32,12 +30,12 @@ uint8_t redIntensity=0, greenIntensity=0,blueIntensity=0;
 void setup() {
 
  Serial.begin(115200);
-  Serial.write(0xFF);
-  Serial.write(0x00);
-  Serial.write(0x06);
+  /*Serial.write(0xFF);
+  Serial.write(0X44);
+  Serial.write(0x57);
   Serial.write(0x01);
   Serial.write(0xFF);
-
+*/
 }
 
 void loop()
@@ -63,31 +61,31 @@ void serialEvent()
 
       if(serialStream[0]==0xFF && serialStream[FRAMELENGTH-1]==0xFF)
      {
-         Serial.println("PacketRecieved");
+         //Serial.println("PacketRecieved");
           uint8_t requestType=serialStream[1];
 
              if(requestType==LEDFRAME)
              {
-                  Serial.println("LEDFrame Detected");
+                  //Serial.println("LEDFrame Detected");
                   uint8_t ledNumber=serialStream[2];
                   uint8_t ledState=serialStream[3];
-                  Serial.print("LED Number: ");
-                  Serial.println(ledNumber, DEC);
+                 //Serial.print("LED Number: ");
+                  //Serial.println(ledNumber, DEC);
                   if(ledState==0x01)
                   {
-                    Serial.println("LED State High");
+                    //Serial.println("LED State High");
                     LED(ledNumber, HIGH);
                   }
                   else
                   {
-                    Serial.println("LED State LOW");
+                    //Serial.println("LED State LOW");
                     LED(ledNumber, LOW);
                   }
              }
 
                  if(requestType==BUZZERFRAME)
              { 
-                  Serial.println("BuzzerFrame Detected");
+                  //Serial.println("BuzzerFrame Detected");
                   //uint8_t ledNumber=serialStream[2];
                   uint8_t buzzerState=serialStream[3];
                   if(buzzerState==0x01)
@@ -105,7 +103,7 @@ void serialEvent()
               
                 if(requestType==RFRAME)
                 {
-                  Serial.println("Red Color Frame Detected");
+                  //Serial.println("Red Color Frame Detected");
                   redIntensity=serialStream[2];
                   RGB(redIntensity,greenIntensity,blueIntensity);
                  
@@ -113,7 +111,7 @@ void serialEvent()
 
                 if(requestType==GFRAME)
                 {
-                  Serial.println("Green Color Frame Detected");
+                  //Serial.println("Green Color Frame Detected");
                   greenIntensity=serialStream[2];
                   RGB(redIntensity,greenIntensity,blueIntensity);
                  
@@ -121,12 +119,27 @@ void serialEvent()
 
                 if(requestType==BFRAME)
                 {
-                  Serial.println("Blue Color Frame Detected");
+                  //Serial.println("Blue Color Frame Detected");
                   blueIntensity=serialStream[2];
                   RGB(redIntensity,greenIntensity,blueIntensity);
                  
                 } 
-          
+
+                if(requestType==SENSORFRAME)
+                {
+                  ////Serial.println("Temp Color Frame Detected");
+                 
+                   Serial.write(0xFF);
+                   Serial.write(SENSORFRAME);
+                   Serial.write(round(temp()));
+                   Serial.write(round(temp()));
+                   Serial.write(round(temp()));
+                   Serial.write(round(temp()));
+                   Serial.write(0x00);
+                   Serial.write(0xFF);
+                } 
+
+                 
      }
       
     }
