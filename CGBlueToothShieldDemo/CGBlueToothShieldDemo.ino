@@ -9,7 +9,7 @@ CGShield CS;
 
 #define BUTTONFRAME 0X43 
 
-#define SENSORFRAME 0X44 
+#define SENSORFRAME 0X45 
 
 
 
@@ -42,6 +42,8 @@ void loop()
 {
  
   serialEvent();
+  //Serial.println(round(light()*100/1024),DEC);
+  //delay(100);
  
 
 }
@@ -127,16 +129,31 @@ void serialEvent()
 
                 if(requestType==SENSORFRAME)
                 {
-                  ////Serial.println("Temp Color Frame Detected");
-                 
+                  //Serial.println("Temp Color Frame Detected");
+                   int lightVal=light();
+                   int trimVal=trim();
+                   //float lightValPercent=(lightVal/1024)*100;
                    Serial.write(0xFF);
                    Serial.write(SENSORFRAME);
-                   Serial.write(round(temp()));
-                   Serial.write(round(temp()));
-                   Serial.write(round(temp()));
-                   Serial.write(round(temp()));
+                   Serial.write(round(temp()));                   
+                   Serial.write(round(floor(lightVal/256)));
+                   Serial.write(round(lightVal%256));
+                   Serial.write(round(floor(trimVal/256)));
+                   Serial.write(round(trimVal%256));
                    Serial.write(0x00);
                    Serial.write(0xFF);
+                } 
+
+                 if(requestType==BUZZERFRAME)
+                {
+                    //Serial.println("Buzzer Frame Detected");
+                   
+                    uint8_t highByteFreq=serialStream[2];
+                    uint8_t lowByteFreq=serialStream[3];
+                     //Serial.println(highByteFreq, DEC);
+                    //Serial.println(lowByteFreq, DEC);
+                    int buzzerFrequency=(highByteFreq<<8) +lowByteFreq;
+                    speaker(buzzerFrequency,500);
                 } 
 
                  
