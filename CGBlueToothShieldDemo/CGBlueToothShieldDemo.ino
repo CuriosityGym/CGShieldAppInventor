@@ -1,5 +1,6 @@
 #include <CGShield.h>
 #include <Wire.h>         // Require for I2C communication
+#include <IRremote.h>
 
 CGShield CS;
 
@@ -16,6 +17,7 @@ CGShield CS;
 #define RFRAME 0X47
 #define GFRAME 0X48
 #define BFRAME 0X49
+#define IRFRAME 0x50
 
 #define ACKFRAME 0X59 //Y
 #define SYNCFRAME 0X5A //Z
